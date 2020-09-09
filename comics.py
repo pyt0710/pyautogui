@@ -1,7 +1,10 @@
+  
 from selenium import webdriver
 import re,os
 import requests
 from time import sleep
+
+
 
 #章节列表
 browser = webdriver.ChromeOptions()
@@ -18,15 +21,15 @@ for page in html.find_elements_by_xpath('//*[@href]'):
 
 #print(all_chapter)
 chapter = re.findall('.*?haizeiwang/(.*?)\..*?html(.*?)\',',str(all_chapter),re.I)
-
-print("=" * 100)
-print('请输入章节前的数字')
 print(chapter)
+print("=" * 100)
+print('输入章节前的数字')
 
 
 
+inint = str(input())
 
-url = 'https://www.manhuabei.com/manhua/haizeiwang/' + str(input()) + '.html'
+url = 'https://www.manhuabei.com/manhua/haizeiwang/' + inint + '.html'
 #获取图片
 def get_image(url):
     
@@ -34,7 +37,7 @@ def get_image(url):
     browser.add_argument('--headless')
     html = webdriver.Chrome(options=browser)
     html.get(url)
-   
+
     imgs = html.find_element_by_xpath('//div[@class="chapter-view"]//div[@id="images"]//img').get_attribute("src")
     print(type(imgs))
     title = html.find_element_by_xpath('//div[@class="chapter-view"]//div[@class="head_title"]//h2').text
@@ -65,44 +68,62 @@ def create_folder():
 
 data = create_folder()
 
-def save_img(i):
+def save_img():
     
     image = requests.get(title_img[0])
     
-    with open(data + '/'+ str(i) + ".jpg",'wb') as f:
+    with open(data + '/'+ str(0) + ".jpg",'wb') as f:
         f.write(image.content)
     print('down')
     
-i=0
-save_img(i)
+
+save_img()
+
+sleep(2)
 
 ###############################################################################################
 ################################################################################
 def get_images(url):
-    sleep(1)
+    
     browser = webdriver.ChromeOptions()
     browser.add_argument('--headless')
     html = webdriver.Chrome(options=browser)
     html.get(url)
-   
+
     imgs = html.find_element_by_xpath('//div[@class="chapter-view"]//div[@id="images"]//img').get_attribute("src")
     print(imgs)
     
     html.close()
     # 图片0，标题1，页码2
     return imgs
-url = url+ "?p=" + str(2)
+#url = url+ "?p=" + str(2)
 
 
-def save_imgs(i):
-    image = requests.get(get_images(url))
+def save_imgs(page):
+    global url
+    global image
+    imjpg = get_images(url)
+    image = requests.get(imjpg)
         
-    with open(data + '/'+ str(i) + ".jpg",'wb') as f:
+    with open(data + '/'+ str(page) + ".jpg",'wb') as f:
         f.write(image.content)
         print('down')
-i=1
-i = i + 1
-save_imgs(i)
+page = 2    
+num = title_img[2]
+while 1:
+    
+
+    
+    if int(page) <= int(num):
+        save_imgs(page)
+        
+        url = 'https://www.manhuabei.com/manhua/haizeiwang/' + inint + '.html' + "?p=" + str(page)
+        page = int(page) + 1
+        print(url)
+        sleep(1)
+    else:
+        print('本章节保存完，直接关闭窗口就行')
+        break
 
 
 ################################################################################
@@ -112,4 +133,3 @@ save_imgs(i)
 # 获取章节
 # 根据章节内容获取图片
 # 自动翻页获取图片
-
