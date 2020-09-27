@@ -23,6 +23,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtMultimedia import QMediaContent,QMediaPlayer
 
 
+
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
@@ -40,6 +41,10 @@ class Ui_Form(object):
         self.label.setWordWrap(True)
         self.play.clicked.connect(self.play_music)
         self.player = QMediaPlayer()
+        self.timer = QtCore.QTimer()
+        self.timer.setInterval(1000)
+        self.timer.start()
+        self.timer.timeout.connect(self.check_music_status)
 
 
         self.retranslateUi(Form)
@@ -58,10 +63,22 @@ class Ui_Form(object):
         return TextLabel
 # 播放 自动下一首 停止
     def play_music(self):
+        
         content = QMediaContent(QtCore.QUrl(url))
         self.player.setMedia(content)
         self.player.setVolume(50)
         self.player.play()
+        
+
+
+    def check_music_status(self):
+        player_status = self.player.mediaStatus()
+        print(player_status)
+        
+        # print("音乐时间：",player_duration)
+        # print("当前播放器状态",player_status)
+        if player_status == 7:
+            self.play_music()
 
 
 
