@@ -151,7 +151,7 @@ IAT.columns = (0,1,2,3,4,5)
 
 
 
-
+highSchool = pd.read_excel(input_file,header=None)
 
 dateFrame = highSchool
 
