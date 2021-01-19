@@ -99,6 +99,8 @@ for x in MSSMHS_S:
 
 IAT = dateFrame[[1,3,8,9]]
 #初中问卷
+
+juniorSchool = pd.read_excel(input_file,header=None)
 dateFrame = juniorSchool
 
 
